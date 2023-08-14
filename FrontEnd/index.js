@@ -12,7 +12,6 @@ async function fetchCategories() {
 let categorieArray = await fetchCategories();
 
 
-
 async function fetchWorks() {
     const response = await fetch("http://localhost:5678/api/works");
     const works = await response.json();
@@ -27,12 +26,10 @@ async function fetchData() {
 }
 
 
-
 async function afficherWorks() {
     const gallery = document.querySelector(".gallery");
     gallery.innerHTML = "";
     let worksArray = await fetchWorks();
-    console.log(worksArray);
     worksArray.forEach((works) => {
         const figure = document.createElement("figure");
         figure.setAttribute("data-name", works.category.name);
@@ -57,7 +54,6 @@ const filteredFigure = document.querySelectorAll(".gallery figure")
 const filterFigure = button => {
     document.querySelector(".active").classList.remove("active");
     button.target.classList.add("active")
-    console.log(button.target)
     
     filteredFigure.forEach(figure => {
         figure.classList.add("hide");
@@ -69,17 +65,13 @@ const filterFigure = button => {
 filterButtons.forEach(button => button.addEventListener("click", filterFigure));
 
 
-
-/**Modale */
+/** Token */
 
 let token = localStorage.getItem("token");
 
 const login = document.querySelector(".login_link")
 const modalButton = document.querySelectorAll(".modal-button");
 const editingToolsBanner = document.querySelector(".editing-tools-banner");
-
-
-/**Authentification */
 
 if(token) {
     editingToolsBanner.style.display = "flex";
@@ -95,14 +87,12 @@ if(token) {
     })
 }
 
-
 /** Generation de la modale editer/supprimer */
 
 async function displayModal() {
     const modalGallery = document.querySelector(".modal_gallery");
     modalGallery.innerHTML = "";
     let worksArray = await fetchWorks();
-    console.log(worksArray);
     worksArray.forEach((works) => {
         const figure = document.createElement("figure");
         figure.classList.add("figure-position", "hoverArrows");
@@ -156,13 +146,10 @@ async function displayModal() {
 displayModal()
 
 
+/** Fonction ouverture/fermeture modale */
+
 const modal = document.querySelector("dialog"); 
 const closeModalIcon = document.querySelector(".close_modal_icon")
-
-
-
-
-/** Fonction ouverture/fermeture modale */
 
 function OpenAndCloseModal() {
     modalButton[2].addEventListener("click", () => {
@@ -180,10 +167,11 @@ closeModalIcon.addEventListener("click", () => {
 OpenAndCloseModal();
 
 
+/** Generation modale ajout photo  */
+
 const modalGallery = document.querySelector(".modal_gallery");
 const modalContent = document.querySelector(".modal_content");
 
-/** Generation modale ajout photo  */
 function newWorkModal (){
     const modalNewButton = document.querySelector(".modal_add-btn");
     let newModalContentHTML = "";
@@ -272,27 +260,28 @@ function newWorkModal (){
                 }
                 
                 let formData = new FormData();
-                formData.append("image", selectedImage.src);
+                formData.append("image", photoInput.files[0]);
                 formData.append("title", titleInput.value);
                 formData.append("category", selectInput.value);
     
                 let requestAdd = {
                     method: "POST",
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`,
                     },
                     body: formData
                 };
+
                 
-                fetch("http://localhost:5678/api/works", requestAdd)
+                fetch('http://localhost:5678/api/works', requestAdd)
                 .then((res) => {
                     if (res.ok) {
                         invalidFormMessage.style.display = "none";
                         validFormMessage.style.display = "block";
-                        submitWorkButton.classList.add("valide")
+                        submitWorkButton.classList.add("valide");
                     } else {
                         invalidFormMessage.style.display = "none";
-                        invalidRequestFormMessage.style.display = "block"
+                        invalidRequestFormMessage.style.display = "block";
                     }
                 });
             });
