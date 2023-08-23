@@ -72,9 +72,11 @@ let token = localStorage.getItem("token");
 const login = document.querySelector(".login_link")
 const modalButton = document.querySelectorAll(".modal-button");
 const editingToolsBanner = document.querySelector(".editing-tools-banner");
+const filterContainer = document.querySelector(".filter-container");
 
 if(token) {
     editingToolsBanner.style.display = "flex";
+    filterContainer.style.display = "none";
 
     modalButton.forEach((button) => {
         button.style.display = "flex";
@@ -161,6 +163,7 @@ window.addEventListener("click", (e) => {
         modal.close();
     }
 });
+
 closeModalIcon.addEventListener("click", () => {
     modal.close();
 });
@@ -185,6 +188,7 @@ function newWorkModal (){
                 <form  id="myForm" action="">
                     <div class="form-add-img">
                         <i class="fa-sharp fa-regular fa-image picture-logo"></i>
+                        <i id="refresh-photo" class="fa-solid fa-xmark"></i>
                         <label for="photo" class="form-add-img-button">+ Ajouter photo</label>
                         <input type="file" id="photo" name="photo">
                         <img alt"image preview" class="selected-img">
@@ -210,7 +214,7 @@ function newWorkModal (){
                 <p class="valid-form-message">Formulaire enregistré !</p>
                 <p class="invalid-request-form-message">Une erreur s'est produite lors de la soumission du formulaire</p>
                     <hr>
-                    <button id="modal_add-work-btn" class="modal_add-work-btn">Valider</button>
+                    <button id="modal_add-work-btn" class="modal_add-work-btn" disabled="disabled">Valider</button>
             </div>`;
 
         const modalReturnIcon = document.querySelector(".modal_add-work_return-icon");
@@ -224,9 +228,18 @@ function newWorkModal (){
             modalContent.innerHTML = newModalContentHTML;
             newWorkModal()
         })
-
-        const photoInput = document.getElementById("photo")
+        window.addEventListener("click", (e) => {
+            if(e.target === modal){
+                modal.close();
+                modalContent.innerHTML = newModalContentHTML;
+                newWorkModal()
+            } 
+        })
+        
+        const photoInput = document.getElementById("photo");
         const selectedImage = document.querySelector(".selected-img");
+        const refreshPhoto = document.getElementById("refresh-photo");
+        const form = document.getElementById("myForm");
         
         photoInput.addEventListener("change", () => {
             const file = photoInput.files[0];
@@ -241,9 +254,15 @@ function newWorkModal (){
                     element.style.display = "none";
                 });
                 selectedImage.style.display = "flex";
+                refreshPhoto.style.display = "flex";
+
             };
             reader.readAsDataURL(file);
+            refreshPhoto.addEventListener('click', () => {
+                form.input = "";
+            });
         });
+
 
         const submitWorkButton = document.getElementById("modal_add-work-btn");
         const titleInput = document.getElementById("titre");
@@ -252,11 +271,19 @@ function newWorkModal (){
         const validFormMessage = document.querySelector(".valid-form-message");
         const invalidRequestFormMessage = document.querySelector(".invalid-request-form-message");
         
+        
         function createNewWork() {
-            submitWorkButton.addEventListener("click", () => {
+            
+           
+            
+            form.addEventListener("change", () => {
                 if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
                     invalidFormMessage.style.display = "block";
-                    return;
+                    return             
+                } else {
+                    invalidFormMessage.style.display = "none";
+                    submitWorkButton.removeAttribute('disabled', 'disabled');
+                    submitWorkButton.classList.add('active');
                 }
                 
                 let formData = new FormData();
@@ -278,7 +305,6 @@ function newWorkModal (){
                     if (res.ok) {
                         invalidFormMessage.style.display = "none";
                         validFormMessage.style.display = "block";
-                        submitWorkButton.classList.add("valide");
                     } else {
                         invalidFormMessage.style.display = "none";
                         invalidRequestFormMessage.style.display = "block";
