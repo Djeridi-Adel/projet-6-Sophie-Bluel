@@ -188,7 +188,7 @@ function newWorkModal (){
                 <form  id="myForm" action="">
                     <div class="form-add-img">
                         <i class="fa-sharp fa-regular fa-image picture-logo"></i>
-                        <i id="refresh-photo" class="fa-solid fa-xmark"></i>
+                        <button type="reset" value="Reset"><i id="refresh-photo" class="fa-solid fa-xmark"></i></button>
                         <label for="photo" class="form-add-img-button">+ Ajouter photo</label>
                         <input type="file" id="photo" name="photo">
                         <img alt"image preview" class="selected-img">
@@ -214,7 +214,7 @@ function newWorkModal (){
                 <p class="valid-form-message">Formulaire enregistré !</p>
                 <p class="invalid-request-form-message">Une erreur s'est produite lors de la soumission du formulaire</p>
                     <hr>
-                    <button id="modal_add-work-btn" class="modal_add-work-btn" disabled="disabled">Valider</button>
+                    <button id="modal_add-work-btn" class="modal_add-work-btn" ">Valider</button>
             </div>`;
 
         const modalReturnIcon = document.querySelector(".modal_add-work_return-icon");
@@ -249,18 +249,30 @@ function newWorkModal (){
                 selectedImage.src = e.target.result;
                 const addImgForm = document.querySelector(".form-add-img");
                 const formElements = addImgForm.querySelectorAll(".form-add-img > *");
+                const btnReset = addImgForm.querySelector("button");
+                const inputPhoto = document.getElementById("photo");
 
                 formElements.forEach((element) => {
                     element.style.display = "none";
+                    btnReset.style.display = "flex";
                 });
                 selectedImage.style.display = "flex";
-                refreshPhoto.style.display = "flex";
 
+                
+              
+                refreshPhoto.addEventListener("click", () =>{
+                    selectedImage.src = "";
+                    formElements.forEach((element) => {
+                        element.style.display = "flex";
+                        btnReset.style.display = "none";
+                        inputPhoto.style.display = "none";
+                        submitWorkButton.classList.remove("valide");
+                    });
+                    selectedImage.style.display = "none";
+                })
             };
             reader.readAsDataURL(file);
-            refreshPhoto.addEventListener('click', () => {
-                form.input = "";
-            });
+            
         });
 
 
@@ -270,27 +282,40 @@ function newWorkModal (){
         const invalidFormMessage = document.querySelector(".invalid-form-message");
         const validFormMessage = document.querySelector(".valid-form-message");
         const invalidRequestFormMessage = document.querySelector(".invalid-request-form-message");
+        const inputs = document.querySelectorAll("input");
         
         
+        
+        
+
         function createNewWork() {
+
+                submitWorkButton.addEventListener("click", () => {
+                    if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
+                        invalidFormMessage.style.display = "block";
+                        return ;            
+                    } 
+                })
+
+                form.addEventListener("change", () => {
+                    if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
+                        submitWorkButton.setAttribute('disabled', 'disabled');
+                        submitWorkButton.classList.remove("valide");
+                    }else {
+                        submitWorkButton.removeAttribute('disabled', 'disabled');
+                        submitWorkButton.classList.add("valide");
+                        invalidFormMessage.style.display = "none";
+a                    }
+                });
             
-           
-            
-            form.addEventListener("change", () => {
-                if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
-                    invalidFormMessage.style.display = "block";
-                    return             
-                } else {
-                    invalidFormMessage.style.display = "none";
-                    submitWorkButton.removeAttribute('disabled', 'disabled');
-                    submitWorkButton.classList.add('active');
-                }
+             
+
                 
-                let formData = new FormData();
+               /* let formData = new FormData();
                 formData.append("image", photoInput.files[0]);
                 formData.append("title", titleInput.value);
                 formData.append("category", selectInput.value);
-    
+                
                 let requestAdd = {
                     method: "POST",
                     headers: {
@@ -298,7 +323,7 @@ function newWorkModal (){
                     },
                     body: formData
                 };
-
+                
                 
                 fetch('http://localhost:5678/api/works', requestAdd)
                 .then((res) => {
@@ -310,9 +335,10 @@ function newWorkModal (){
                         invalidRequestFormMessage.style.display = "block";
                     }
                 });
-            });
+            */
         }
         createNewWork();
+
     });
     
 }

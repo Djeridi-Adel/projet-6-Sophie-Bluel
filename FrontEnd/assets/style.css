@@ -544,8 +544,16 @@ hr{
 	visibility: visible;
 }
 
-#refresh-photo {
+#myForm button {
 	display: none;
+	position: absolute;
+	right: 18%;
+	top: 23%;
+	border: none;
+}
+
+#refresh-photo {
+	border: none;
 	position: absolute;
 	right: 18%;
 	top: 23%;

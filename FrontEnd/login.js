@@ -32,7 +32,7 @@ submit.addEventListener('click', (e) => {
       .then(login => {
           if (login.token) {
               localStorage.setItem('token', login.token);
-              window.location.href = "./index.html";
+              window.location.href = "index.html";
           } else {
               messageEror.style.visibility = "visible";
           };
