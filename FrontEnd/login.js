@@ -28,16 +28,19 @@ submit.addEventListener('click', (e) => {
   emailValue = inputEmail.value;
   passwordValue = inputPassword.value;
   loginRequest()
-      .then((response) => response.json())
-      .then(login => {
-          if (login.token) {
-              localStorage.setItem('token', login.token);
-              window.location.href = "index.html";
-          } else {
-              messageEror.style.visibility = "visible";
-          };
-        });
-    });
+    .then((response) => response.json())
+    .then(login => {
+        if (login.token) {
+            localStorage.setItem('token', login.token);
+            window.location.href = "index.html";
+        } else {
+            messageEror.style.visibility = "visible";
+        };
+    }).catch(error =>{
+    console.error(error)
+    messageEror.style.visibility = "visible";
+    })
+});
     
-   
+
         

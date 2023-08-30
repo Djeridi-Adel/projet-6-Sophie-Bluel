@@ -85,7 +85,7 @@ if(token) {
     login.innerHTML = "logout"
     login.addEventListener("click", function(){
         localStorage.removeItem("token")
-        window.location.href = "login.html"
+        window.location = "./login.html"
     })
 }
 
@@ -146,6 +146,7 @@ async function displayModal() {
       
 }
 displayModal()
+
 
 
 /** Fonction ouverture/fermeture modale */
@@ -290,28 +291,24 @@ function newWorkModal (){
 
         function createNewWork() {
 
-                submitWorkButton.addEventListener("click", () => {
-                    if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
-                        invalidFormMessage.style.display = "block";
-                        return ;            
-                    } 
-                })
+            form.addEventListener("change", () => {
+                if (photoInput.value === '' && titleInput.value === '' && selectInput.value === ''){
+                    submitWorkButton.setAttribute('disabled', 'disabled');
+                    submitWorkButton.classList.remove("valide");
+                }else {
+                    submitWorkButton.removeAttribute('disabled', 'disabled');
+                    submitWorkButton.classList.add("valide");
+                    invalidFormMessage.style.display = "none";
+                }
+            });
 
-                form.addEventListener("change", () => {
-                    if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
-                        submitWorkButton.setAttribute('disabled', 'disabled');
-                        submitWorkButton.classList.remove("valide");
-                    }else {
-                        submitWorkButton.removeAttribute('disabled', 'disabled');
-                        submitWorkButton.classList.add("valide");
-                        invalidFormMessage.style.display = "none";
-a                    }
-                });
+            submitWorkButton.addEventListener("click", () => {
+                if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
+                    invalidFormMessage.style.display = "block";
+                    return ;            
+                } 
             
-             
-
-                
-               /* let formData = new FormData();
+                let formData = new FormData();
                 formData.append("image", photoInput.files[0]);
                 formData.append("title", titleInput.value);
                 formData.append("category", selectInput.value);
@@ -335,7 +332,7 @@ a                    }
                         invalidRequestFormMessage.style.display = "block";
                     }
                 });
-            */
+            });
         }
         createNewWork();
 
