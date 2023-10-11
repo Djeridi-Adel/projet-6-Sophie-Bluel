@@ -122,6 +122,7 @@ async function displayModal() {
     });
 
     const modalDeleteLogo = document.querySelectorAll(".delete-logo");
+    const messageErrorModal = document.querySelector(".message-error-modal")
 
     let deleteRequest = {
         method: "DELETE",
@@ -131,17 +132,20 @@ async function displayModal() {
     };
 
     modalDeleteLogo.forEach((trashcan) => {
-        trashcan.addEventListener("click", function() {
+        trashcan.addEventListener("click", function(e) {
+            e.preventDefault();
             const workId = trashcan.getAttribute("data-id");
             fetch(`http://localhost:5678/api/works/${workId}`, deleteRequest)
                 .then((res) => {
                     if(res.ok) {
                         trashcan.parentElement.remove();
                         const deleteFigure = document.querySelector(`figure[data-id="${workId}"]`);
-                        deleteFigure.remove();
                     }
-                });
-        });
+                }).catch(error =>{
+                    console.log(error)
+                    messageErrorModal.style.visibility = "visible";
+                })
+            });
     });
       
 }
@@ -270,6 +274,8 @@ function newWorkModal (){
                         submitWorkButton.classList.remove("valide");
                     });
                     selectedImage.style.display = "none";
+                    validFormMessage.style.display = "none";
+                    invalidFormMessage.style.display = "none";
                 })
             };
             reader.readAsDataURL(file);
@@ -302,11 +308,12 @@ function newWorkModal (){
                 }
             });
 
-            submitWorkButton.addEventListener("click", () => {
+            submitWorkButton.addEventListener("click", (e) => {
+                e.preventDefault();
                 if (photoInput.value === '' || titleInput.value === '' || selectInput.value === ''){
                     invalidFormMessage.style.display = "block";
-                    return ;            
                 } 
+                            
             
                 let formData = new FormData();
                 formData.append("image", photoInput.files[0]);
@@ -319,7 +326,7 @@ function newWorkModal (){
                         Authorization: `Bearer ${token}`,
                     },
                     body: formData
-                };
+                }
                 
                 
                 fetch('http://localhost:5678/api/works', requestAdd)
@@ -331,13 +338,16 @@ function newWorkModal (){
                         invalidFormMessage.style.display = "none";
                         invalidRequestFormMessage.style.display = "block";
                     }
-                });
+                }).catch(error =>{
+                    console.log(error)
+                    invalidRequestFormMessage.style.display = "block";
+                })
             });
+            return false;
         }
         createNewWork();
 
     });
-    
 }
 newWorkModal()
 
