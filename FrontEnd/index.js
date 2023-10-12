@@ -171,6 +171,7 @@ window.addEventListener("click", (e) => {
 
 closeModalIcon.addEventListener("click", () => {
     modal.close();
+    window.location.href = window.location.href
 });
 OpenAndCloseModal();
 
