@@ -1,3 +1,11 @@
+const gallery = document.querySelector(".gallery");
+const filterButtons = document.querySelectorAll(".filter-container button");
+const filteredFigure = document.querySelectorAll(".gallery figure")
+const login = document.querySelector(".login_link")
+const modalButton = document.querySelectorAll(".modal-button");
+const editingToolsBanner = document.querySelector(".editing-tools-banner");
+const filterContainer = document.querySelector(".filter-container");
+
 let worksData
 let worksArray
 let works = []
@@ -9,6 +17,7 @@ async function fetchCategories() {
     categoryData = categories;
     return categories;
 };
+
 let categorieArray = await fetchCategories();
 
 
@@ -27,7 +36,6 @@ async function fetchData() {
 
 
 async function afficherWorks() {
-    const gallery = document.querySelector(".gallery");
     gallery.innerHTML = "";
     let worksArray = await fetchWorks();
     worksArray.forEach((works) => {
@@ -48,8 +56,7 @@ async function afficherWorks() {
 
 await afficherWorks();
 
-const filterButtons = document.querySelectorAll(".filter-container button");
-const filteredFigure = document.querySelectorAll(".gallery figure")
+
 
 const filterFigure = button => {
     document.querySelector(".active").classList.remove("active");
@@ -68,11 +75,6 @@ filterButtons.forEach(button => button.addEventListener("click", filterFigure));
 /** Token */
 
 let token = localStorage.getItem("token");
-
-const login = document.querySelector(".login_link")
-const modalButton = document.querySelectorAll(".modal-button");
-const editingToolsBanner = document.querySelector(".editing-tools-banner");
-const filterContainer = document.querySelector(".filter-container");
 
 if(token) {
     editingToolsBanner.style.display = "flex";
@@ -131,15 +133,18 @@ async function displayModal() {
         }
     };
 
-    modalDeleteLogo.forEach((trashcan) => {
+    modalDeleteLogo.forEach((trashcan, index) => {
         trashcan.addEventListener("click", function(e) {
             e.preventDefault();
             const workId = trashcan.getAttribute("data-id");
+            const indexWork = document.querySelectorAll('.gallery figure');
             fetch(`http://localhost:5678/api/works/${workId}`, deleteRequest)
                 .then((res) => {
                     if(res.ok) {
                         trashcan.parentElement.remove();
-                        const deleteFigure = document.querySelector(`figure[data-id="${workId}"]`);
+                    }
+                    if(indexWork[index]) {
+                        indexWork[index].remove();
                     }
                 }).catch(error =>{
                     console.log(error)
@@ -161,6 +166,7 @@ const closeModalIcon = document.querySelector(".close_modal_icon")
 function OpenAndCloseModal() {
     modalButton[2].addEventListener("click", () => {
         modal.showModal();
+        displayModal();
     });
 };
 window.addEventListener("click", (e) => {
@@ -171,7 +177,7 @@ window.addEventListener("click", (e) => {
 
 closeModalIcon.addEventListener("click", () => {
     modal.close();
-    window.location.href = "./index.html"
+    /*window.location.href = "./index.html"*/
 });
 OpenAndCloseModal();
 
@@ -226,7 +232,8 @@ function newWorkModal (){
         const modalReturnIcon = document.querySelector(".modal_add-work_return-icon");
         modalReturnIcon.addEventListener("click", function(){
            modalContent.innerHTML = newModalContentHTML;
-           newWorkModal()
+           newWorkModal();
+           displayModal();
         })
         const modalCloseIcon = document.querySelector(".close_modal_icon");
         modalCloseIcon.addEventListener("click", function(){
@@ -335,6 +342,8 @@ function newWorkModal (){
                     if (res.ok) {
                         invalidFormMessage.style.display = "none";
                         validFormMessage.style.display = "block";
+                        gallery.innerHTML = "";
+                        afficherWorks();
                     } else {
                         invalidFormMessage.style.display = "none";
                         invalidRequestFormMessage.style.display = "block";
