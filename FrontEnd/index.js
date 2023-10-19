@@ -1,7 +1,5 @@
 const gallery = document.querySelector(".gallery");
-const filterButtons = document.querySelectorAll(".filter-container button");
-const filteredFigure = document.querySelectorAll(".gallery figure")
-const login = document.querySelector(".login_link")
+const login = document.querySelector(".login_link");
 const modalButton = document.querySelectorAll(".modal-button");
 const editingToolsBanner = document.querySelector(".editing-tools-banner");
 const filterContainer = document.querySelector(".filter-container");
@@ -56,7 +54,8 @@ async function afficherWorks() {
 
 await afficherWorks();
 
-
+const filterButtons = document.querySelectorAll(".filter-container button");
+const filteredFigure = document.querySelectorAll(".gallery figure");
 
 const filterFigure = button => {
     document.querySelector(".active").classList.remove("active");
@@ -284,6 +283,7 @@ function newWorkModal (){
                     selectedImage.style.display = "none";
                     validFormMessage.style.display = "none";
                     invalidFormMessage.style.display = "none";
+                    invalidRequestFormMessage.style.display = "none";
                 })
             };
             reader.readAsDataURL(file);
@@ -345,8 +345,8 @@ function newWorkModal (){
                         gallery.innerHTML = "";
                         afficherWorks();
                     } else {
-                        invalidFormMessage.style.display = "none";
-                        invalidRequestFormMessage.style.display = "block";
+                        invalidFormMessage.style.display = "block";
+                        invalidRequestFormMessage.style.display = "none";
                     }
                 }).catch(error =>{
                     console.log(error)
